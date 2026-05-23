@@ -1,0 +1,1315 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 178,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "bf57bq8e3nthcc"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 1,
+        "y": 0
+      },
+      "id": 21,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf57bq8e3nthcc"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"on-ec2\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf57bq8e3nthcc"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf57bq8e3nthcc"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf57bq8e3nthcc"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "TraDex Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "cf5rta000ip6od"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 24,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5rta000ip6od"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80\r\n",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5rta000ip6od"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5rta000ip6od"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"prometheus\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"prometheus\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5rta000ip6od"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"prometheus\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Cosmic Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "bf5rhpu60m96oe"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "AgnikPodStatus",
+              "url": "http://165.22.215.139:3000/d/Master-Agnik12/pod-resources-stats?orgId=1&from=now-5m&to=now&timezone=browser&var-namespace=default&var-container=admin-new-ui"
+            }
+          ],
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 19,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf5rhpu60m96oe"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"on-ec2\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf5rhpu60m96oe"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf5rhpu60m96oe"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bf5rhpu60m96oe"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Agnik Server  Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "cf5gsnegc0jr4a"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 1,
+        "y": 6
+      },
+      "id": 7,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5gsnegc0jr4a"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"on-ec2\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "legendFormat": "Runniing",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5gsnegc0jr4a"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "legendFormat": "Unavailable",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5gsnegc0jr4a"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5gsnegc0jr4a"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Pace Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ff5jwdti0frb4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 9,
+        "y": 6
+      },
+      "id": 17,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ff5jwdti0frb4c"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ff5jwdti0frb4c"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ff5jwdti0frb4c"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ff5jwdti0frb4c"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Stocko server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "cf5ablj00bri8e"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "id": 13,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5ablj00bri8e"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"on-ec2\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5ablj00bri8e"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5ablj00bri8e"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5ablj00bri8e"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Pentad server Alert ",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "cf5jwkzi9vif4b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 1,
+        "y": 12
+      },
+      "id": 15,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5jwkzi9vif4b"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"on-ec2\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5jwkzi9vif4b"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5jwkzi9vif4b"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "cf5jwkzi9vif4b"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Hkkr Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "df5h00jwewr9cb"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 7,
+        "x": 8,
+        "y": 12
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df5h00jwewr9cb"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"on-ec2\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "instant": false,
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df5h00jwewr9cb"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"on-ec2\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"on-ec2\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df5h00jwewr9cb"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"on-ec2\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"on-ec2\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df5h00jwewr9cb"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"on-ec2\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Pocketful Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "df99naq5y9z40b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 12
+      },
+      "id": 3,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df99naq5y9z40b"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"prometheus\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"prometheus\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df99naq5y9z40b"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80\r\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df99naq5y9z40b"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "df99naq5y9z40b"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"prometheus\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Basan Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "ef5lb9capughse"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 19
+      },
+      "id": 23,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ef5lb9capughse"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"prometheus\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"prometheus\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ef5lb9capughse"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80\r\n",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ef5lb9capughse"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ef5lb9capughse"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"prometheus\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "MasterTrust Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "bfdhklgvzqltsa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 19
+      },
+      "id": 22,
+      "options": {
+        "displayLabels": [
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.2.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bfdhklgvzqltsa"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      avg(irate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[1m])) \r\n      by (instance)\r\n      * 100\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80\r\n",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Running",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bfdhklgvzqltsa"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 - (\r\n      node_filesystem_avail_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 100\r\n      / \r\n      node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"}\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_filesystem_size_bytes{job=\"prometheus\", mountpoint=\"/\", fstype!=\"rootfs\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bfdhklgvzqltsa"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - (\r\n        node_memory_MemAvailable_bytes{job=\"prometheus\"}\r\n        /\r\n        node_memory_MemTotal_bytes{job=\"prometheus\"}\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_memory_MemTotal_bytes{job=\"prometheus\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "bfdhklgvzqltsa"
+          },
+          "editorMode": "code",
+          "expr": "(avg by (instance_ip, instance_name, k8s_node_group_name) (\r\n  (\r\n    100 * (\r\n      1 - avg by (instance) (\r\n        rate(node_cpu_seconds_total{mode=\"idle\", job=\"prometheus\"}[5m])\r\n      )\r\n      /\r\n      avg by (instance) (\r\n        sum without (mode) (rate(node_cpu_seconds_total{job=\"prometheus\"}[5m]))\r\n      )\r\n    )\r\n  )\r\n  * on (instance) group_left(instance_ip, instance_name, k8s_node_group_name)\r\n  max by (instance, instance_ip, instance_name, k8s_node_group_name) (\r\n    node_cpu_seconds_total{job=\"prometheus\", mode=\"idle\"} * 0 + 1\r\n  )\r\n)) > 80",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Stocko-CUG Server Alert",
+      "transparent": true,
+      "type": "piechart"
+    }
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "ALL BROKERS ALERT DASHBOARD",
+  "uid": "eefijwoife",
+  "version": 21
+}
